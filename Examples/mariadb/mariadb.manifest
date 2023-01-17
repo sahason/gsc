@@ -1,21 +1,25 @@
-# Some workloads like Python may generate huge manifest files
-loader.pal_internal_mem_size = "128M"
+# SPDX-License-Identifier: LGPL-3.0-or-later
+# Copyright (C) 2023 Intel Corporation
 
+# This file has basic set of values defined for graminizing PyTorch images. This manifest template
+# is used by `curation_script.sh` to create the user manifest file that will be passed to GSC.
+
+sgx.nonpie_binary = true
 sgx.enclave_size = "16G"
 sgx.thread_num = 512
+loader.pal_internal_mem_size = "128M"
 
-# FIXME: `toml` Python lib that was used in Gramine v1.3 and lower hangs/fails on non-homogeneous
-#        TOML arrays, so until we fully deprecate support for Gramine v1.3 in GSC, specify items in
-#        the sgx.trusted_files array only as strings (never as dicts `{ "uri": "file:file1" }`)
-sgx.trusted_files = [
-  "file:/gramine/app_files/entrypoint.manifest",  # unused entry, only to test merging of manifests
-  "file:/run/mysqld/",
-]
+# This is required to run workload as non-root user, any random number works except `0` which
+# is for root.
+loader.uid=999
+loader.gid=999
+
+sys.enable_extra_runtime_domain_names_conf = true
 
 fs.mounts = [
     { type = "encrypted", path = "/var/lib/mysql", uri = "file:/var/lib/mysql" },
-    { type = "encrypted", path = "/run/mysqld/mysqld.pid", uri = "file:/run/mysqld/mysqld.pid" },
+    { type = "encrypted", path = "/run/mysqld", uri = "file:/run/mysqld"},
     { type = "tmpfs", path = "/tmp" },
 ]
 
-fs.insecure__keys.default = "78537f75e36fbb25d83574bdb30d8372"
+fs.insecure__keys.default = "05fc8b4aad35990b7de82f89e331187c"

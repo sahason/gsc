@@ -63,7 +63,7 @@
 6. ./gsc sign-image mariadb-base enclave-key.pem
 
 ## Start MariaDB server
-docker run --device=/dev/sgx_enclave -it gsc-mariadb-base 
+docker run --device=/dev/sgx_enclave -v /var/lib/mysql:/var/lib/mysql -it gsc-mariadb-base 
 
 ## Connect client to the server
 

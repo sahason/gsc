@@ -10,15 +10,12 @@ export MARIADB_BASE_IMAGE=mariadb-base
 
 dd if=/dev/urandom bs=16 count=1 > encryption_key
 
-cp -r /var/lib/mysql $HOME/
-rm -rf var/lib/mysql/*
-mkdir -p var/lib/mysql
-cp -r /var/lib/mysql/* var/lib/mysql 
-gramine-sgx-pf-crypt encrypt -w encryption_key -i var/lib/mysql -o /var/lib/mysql
-cp -r /var/lib/mysql/* var/lib/mysql
-rm -rf /var/lib/mysql/*
-mv $HOME/mysql/* /var/lib/mysql/
-rm -rf $HOME/mysql
+
+if [ ! -d /tmp/encrypted-data ]; then
+    mkdir -p /tmp/mariadb-data
+    cp -r /var/lib/mysql/* /tmp/mariadb-data
+    gramine-sgx-pf-crypt encrypt -w encryption_key -i /tmp/mariadb-data -o /var/lib/mysql
+fi
 
 docker build \
     -f Dockerfile \
@@ -30,5 +27,3 @@ sed -i "/fs.insecure__keys.default*/c fs.insecure__keys.default = \"$insecure_ke
 popd
 
 echo -e '\n\nCreated base image `'$MARIADB_BASE_IMAGE'`.'
-echo -e 'Please refer to `Curated-Apps/workloads/mariadb/README.md` to curate the above image' \
-' with GSC.\n'
