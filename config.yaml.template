@@ -6,11 +6,12 @@
 # - ubuntu:20.04, ubuntu:21.04
 # - debian:10, debian:11
 # - centos:8
-Distro: "ubuntu:20.04"
+# - ubi:8.8
+Distro: "ubi:8.8"
 
 # If the image has a specific registry, define it here.
 # Empty by default; example value: "registry.access.redhat.com/ubi8".
-Registry: ""
+Registry: "registry.access.redhat.com/ubi8"
 
 # If you're using your own fork and branch of Gramine, specify the GitHub link and the branch name
 # below; typically, you want to keep the default values though.
