@@ -5,17 +5,24 @@
 # This is because each Dockerfile command creates a new layer which necessarily adds size to the
 # final image. This trick allows to decrease the image size by hundreds of MBs.
 
-RUN yum install -y dnf
+RUN echo "[CentosBaseOS]" >> /etc/yum.repos.d/ubi.repo \
+ && echo "name=CentOSBaseOS" >> /etc/yum.repos.d/ubi.repo \
+ && echo "baseurl=http://vault.centos.org/centos/8/BaseOS/x86_64/os" >> /etc/yum.repos.d/ubi.repo \
+ && echo "enabled=1" >> /etc/yum.repos.d/ubi.repo \
+ && echo "gpgcheck=1" >> /etc/yum.repos.d/ubi.repo \
+ && echo "gpgkey=https://www.centos.org/keys/RPM-GPG-KEY-CentOS-Official" >> /etc/yum.repos.d/ubi.repo
 
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
-    && dnf update -y
+RUN echo "[CentOSAppStream]" >> /etc/yum.repos.d/ubi.repo \
+ && echo "name=CentOSAppStream" >> /etc/yum.repos.d/ubi.repo \
+ && echo "baseurl=http://vault.centos.org/centos/8/AppStream/x86_64/os" >> /etc/yum.repos.d/ubi.repo \
+ && echo "enabled=1" >> /etc/yum.repos.d/ubi.repo \
+ && echo "gpgcheck=1" >> /etc/yum.repos.d/ubi.repo \
+ && echo "gpgkey=https://www.centos.org/keys/RPM-GPG-KEY-CentOS-Official" >> /etc/yum.repos.d/ubi.repo
 
-RUN rpm --import https://www.centos.org/keys/RPM-GPG-KEY-CentOS-Official \
-    && dnf config-manager --disableplugin subscription-manager --add-repo http://vault.centos.org/centos/8/BaseOS/x86_64/os \
-    && dnf config-manager --disableplugin subscription-manager --add-repo http://vault.centos.org/centos/8/AppStream/x86_64/os 
+RUN  rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 
-RUN dnf update -y \
-    &&  dnf --disableplugin=subscription-manager install -y \
+RUN microdnf update -y \
+    &&  microdnf --disableplugin=subscription-manager install -y \
         binutils \
         wget \
         pkgconfig \
@@ -26,16 +33,16 @@ RUN dnf update -y \
         python3-cryptography \
         python3-pip \
         python3-protobuf \
-	python3-aexpect \
+	findutils \
     && /usr/bin/python3 -B -m pip install click jinja2 protobuf \
                                           'tomli>=1.1.0' 'tomli-w>=0.4.0' \
-    && dnf repolist \
+    && microdnf repolist \
 # Install pyelftools after the installation of epel-release as it is provided by the EPEL repo
-    && dnf install -y python3-pyelftools \
-    && dnf -y clean all
+    && microdnf install -y python3-pyelftools \
+    && microdnf -y clean all
 
 {% if buildtype != "release" %}
-RUN dnf install -y \
+RUN microdnf install -y \
         gdb \
         less \
         libunwind \
