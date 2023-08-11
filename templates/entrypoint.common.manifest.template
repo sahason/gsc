@@ -1,4 +1,4 @@
-libos.entrypoint = "/gramine/app_files/{{binary_basename}}"
+libos.entrypoint = "/usr/bin/java"
 
 # Add distro-specific `loader.entrypoint` and `loader.env.LD_LIBRARY_PATH`
 {% block loader %}{% endblock %}
