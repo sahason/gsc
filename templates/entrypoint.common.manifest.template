@@ -1,4 +1,4 @@
-libos.entrypoint = "/usr/bin/java"
+libos.entrypoint = "/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.382.b05-2.el8.x86_64/jre/bin/java"
 
 # Add distro-specific `loader.entrypoint` and `loader.env.LD_LIBRARY_PATH`
 {% block loader %}{% endblock %}
