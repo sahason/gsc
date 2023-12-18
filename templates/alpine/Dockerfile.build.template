@@ -1,0 +1,30 @@
+{% extends "Dockerfile.common.build.template" %}
+
+{% block install %}
+{% set distro = Distro.split(':') %}
+# Combine all installation and removal steps in a single RUN command to reduce the final image size.
+# This is because each Dockerfile command creates a new layer which necessarily adds size to the
+# final image. This trick allows to decrease the image size by hundreds of MBs.
+RUN apk add \
+        bash \
+        binutils \
+        protobuf-c-dev \
+        openssl \
+        python3 \
+        py3-cryptography \
+        py3-protobuf \
+        py3-elftools \
+        py3-pip \
+        py3-click \
+        py3-jinja2 \
+        py3-tomli \
+        py3-tomli-w
+{% if buildtype != "release" %}
+RUN apk add \
+        gdb \
+        less \
+        py3-pytest \
+        strace \
+        vim
+{% endif %}
+{% endblock %}

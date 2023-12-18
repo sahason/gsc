@@ -100,14 +100,13 @@ def generate_trusted_files(root_dir, already_added_files):
 
             trusted_files.append(trusted_file_entry)
             num_trusted += 1
-
     print(f'\t[from inside Docker container] Found {num_trusted} files in `{root_dir}`.')
     return trusted_files
 
 
 def generate_library_paths():
     encoding = sys.stdout.encoding if sys.stdout.encoding is not None else 'UTF-8'
-    ld_paths = subprocess.check_output('ldconfig -v -N -X', stderr=subprocess.PIPE, shell=True)
+    ld_paths = subprocess.check_output('ldconfig -v -N -X /etc/ld.so.conf', stderr=subprocess.PIPE, shell=True)
     ld_paths = ld_paths.decode(encoding).splitlines()
 
     # Library paths start without whitespace (in contrast to libraries found under this path)
